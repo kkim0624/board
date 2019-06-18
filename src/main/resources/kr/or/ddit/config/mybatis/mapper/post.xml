@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="post">
+
+  	<!-- 특정 게시글 조회 -->
+	<select id="getPost" parameterType="string" resultType="postVo">
+		select *
+		from post 
+		where postId = #{postId}
+	</select>
+	
+	<!-- 게시글 등록 -->
+	<insert id="insertPost" parameterType="postVo">
+		insert into post
+		values ( #{postId}, #{userId}, #{postTitle}, #{postContent}, 
+				 #{postWriteDate}, #{postIsActive}, #{parentId}, #{boardId} )
+	</insert>
+	
+	<!-- 게시글 페이지 리스트 조회 -->
+	<!-- pageVo int page, int pageSize -->
+	<select id="postPagingList" parameterType="pageVo" resultType="postVo">
+	    select * 
+	    from (select a.*, rownum rn
+	       from
+	         (select  u.*
+	          from    post u
+	          order by postId) a)
+	    where rn &gt;= (#{page}-1)*#{pageSize}+1 and rn &lt;= #{page}*#{pageSize}
+	</select>
+	
+	<!-- 사용자 전체수 조회 -->
+	<select id="postCnt" resultType="int" >
+		select count (*)
+		from post
+	</select> 
+	
+</mapper>

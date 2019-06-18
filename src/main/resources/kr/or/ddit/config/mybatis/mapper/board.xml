@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="board">
+
+	<!-- 전체 사용자 리스트 조회 -->
+	<select id="boardList" resultType="boardVo">
+	  select /*+INDEX(board PK_board)*/* 
+	  from board
+	  order by boardId
+	</select>
+
+	<!-- 특정 게시판 조회 -->
+	<select id="getUser" parameterType="string" resultType="boardVo">
+		select *
+		from board 
+		where boardId = #{boardId}
+	</select>
+	
+	<!-- 게시판 등록 -->
+<!-- 	<insert id="insertBoard" parameterType="boardVo"> -->
+<!-- 		insert into board(boardId,boardNm,boardIsActive,boardRegDate) -->
+<!-- 		values (BOARD_SEQ.nextVal,#{boardNm},#{boardIsActive},sysdate) -->
+<!-- 	</insert> -->
+
+	<!-- 게시판 등록 -->
+	<insert id="insertBoard" parameterType="boardVo">
+		insert into board(boardId,userId,boardNm,boardIsActive,boardRegDate)
+		values (BOARD_SEQ.nextVal,#{userId},#{boardNm},'Y',sysdate)
+	</insert>
+	
+	<!-- 게시판 삭제 -->
+	<delete id="deleteBoard" parameterType="string">
+		delete
+		from board
+		where boardId = #{boardId}
+	</delete>
+	
+	<!-- 게시판 수정 -->
+	<update id="modifyBoard" parameterType="boardVo">
+		update users
+		set name=#{name}, alias=#{alias}, pass=#{pass}, addr1=#{addr1}, 
+	        addr2=#{addr2}, zipcd=#{zipcd}, birth=#{birth}
+	        <if test="path != null">
+	        	,path = #{path}, filename = #{filename}
+	        </if>
+		where userId = #{userId}
+	</update>
+	
+	<!-- 게시판 페이지 리스트 조회 -->
+	<!-- pageVo int page, int pageSize -->
+	<select id="boardPagingList" parameterType="pageVo" resultType="boardVo">
+	    select * 
+	    from (select a.*, rownum rn
+	       from
+	         (select  u.*
+	          from    board u
+	          order by boardId) a)
+	    where rn &gt;= (#{page}-1)*#{pageSize}+1 and rn &lt;= #{page}*#{pageSize}
+	</select>
+	
+	<!-- 게시판 전체수 조회 -->
+	<select id="boardCnt" resultType="int" >
+		select count (*)
+		from board
+	</select>  
+	
+</mapper>
+
+<!-- 게시판 등록 -->
+<!-- 	<insert id="insertBoard" parameterType="boardVo"> -->
+<!-- 		insert into board -->
+<!-- 		values ( BOARD_SEQ.nextVal, #{userId}, #{boardNm},'Y',sysdate ) -->
+<!-- 	</insert> -->
+
+<!-- 게시판 등록 -->
+<!-- 	<insert id="insertBoard" parameterType="boardVo"> -->
+<!-- 		insert into board -->
+<!-- 		values ( #{boardId}, #{userId}, #{boardNm}, #{boardIsActive}, #{boardRegDate} ) -->
+<!-- 	</insert> -->
