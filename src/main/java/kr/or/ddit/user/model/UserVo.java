@@ -3,8 +3,6 @@ package kr.or.ddit.user.model;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.eclipse.jdt.internal.compiler.ast.ThisReference;
-
 
 public class UserVo {
 	
